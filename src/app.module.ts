@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { UsersModule } from './users/users.module';
-import { RolesModule } from './roles/roles.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -18,8 +16,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    UsersModule,
-    RolesModule,
     AuthModule,
   ],
   controllers: [],
