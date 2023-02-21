@@ -1,4 +1,3 @@
-import { CreateUserDto } from './create-user.dto';
-import { LoginUserDto } from './login-user.dto';
-
-export const userDTO = [CreateUserDto, LoginUserDto];
+export { CreateUserDto } from './create-user.dto';
+export { LoginUserDto } from './login-user.dto';
+export { DeleteUserDto } from './delete-user.dto';
