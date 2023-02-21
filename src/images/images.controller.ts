@@ -10,10 +10,14 @@ import {
 import { ImagesService } from './images.service';
 import { CreateImageDto } from './dto/create-image.dto';
 import { UpdateImageDto } from './dto/update-image.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('images')
 export class ImagesController {
-  constructor(private readonly imagesService: ImagesService) {}
+  constructor(
+    private readonly imagesService: ImagesService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Post()
   create(@Body() createImageDto: CreateImageDto) {

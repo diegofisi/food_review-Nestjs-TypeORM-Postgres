@@ -53,6 +53,21 @@ export class AuthService {
     };
   }
 
+  async deleteAccount(user: User) {
+    try {
+      user.isActive = false;
+      await this.userRepository.save(user);
+      return { message: 'User deleted' };
+    } catch (error) {
+      this.handleDBErrors(error);
+    }
+  }
+
+  async deleteUser(email: string) {
+    const user = await this.userRepository.findOne({ where: { email } });
+    await this.deleteAccount(user);
+  }
+
   async checkAuthStatus(user: User) {
     return {
       ...user,

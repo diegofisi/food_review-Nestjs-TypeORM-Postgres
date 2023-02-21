@@ -14,9 +14,21 @@ export class AuthController {
     return this.authService.create(createUserDto);
   }
 
-  @Post('login')
+  @Get('login')
   loginUser(@Body() loginUserDto: LoginUserDto) {
     return this.authService.login(loginUserDto);
+  }
+
+  @Get('delete-account')
+  @Auth()
+  deleteAccount(@GetUser() user: User) {
+    return this.authService.deleteAccount(user);
+  }
+
+  @Post('delete-user')
+  @Auth(ValidRoles.admin, ValidRoles.superUser)
+  deleteUser(@Body() email: string) {
+    return this.authService.deleteUser(email);
   }
 
   @Get('check-auth')
