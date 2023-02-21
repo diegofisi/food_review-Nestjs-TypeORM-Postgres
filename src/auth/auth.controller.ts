@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { Auth, GetUser } from './decorators';
 import { ValidRoles } from './interfaces/valid-roles';
 import { CreateUserDto } from './users/dto/create-user.dto';
+import { DeleteUserDto } from './users/dto/delete-user.dto';
 import { LoginUserDto } from './users/dto/login-user.dto';
 import { User } from './users/entities/user.entity';
 @Controller('auth')
@@ -19,7 +20,7 @@ export class AuthController {
     return this.authService.login(loginUserDto);
   }
 
-  @Get('delete-account')
+  @Get('delete-my-account')
   @Auth()
   deleteAccount(@GetUser() user: User) {
     return this.authService.deleteAccount(user);
@@ -27,8 +28,8 @@ export class AuthController {
 
   @Post('delete-user')
   @Auth(ValidRoles.admin, ValidRoles.superUser)
-  deleteUser(@Body() email: string) {
-    return this.authService.deleteUser(email);
+  deleteUser(@Body() deleteUserDto: DeleteUserDto) {
+    return this.authService.deleteUser(deleteUserDto);
   }
 
   @Get('check-auth')

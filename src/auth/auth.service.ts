@@ -12,6 +12,7 @@ import { User } from './users/entities/user.entity';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoginUserDto } from './users/dto/login-user.dto';
+import { DeleteUserDto } from './users/dto/delete-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -63,9 +64,17 @@ export class AuthService {
     }
   }
 
-  async deleteUser(email: string) {
-    const user = await this.userRepository.findOne({ where: { email } });
-    await this.deleteAccount(user);
+  async deleteUser(deleteUserDto: DeleteUserDto) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { email: deleteUserDto.email },
+      });
+      user.isActive = false;
+      await this.userRepository.save(user);
+      return { message: `User with ${deleteUserDto.email} deleted` };
+    } catch (error) {
+      this.handleDBErrors(error);
+    }
   }
 
   async checkAuthStatus(user: User) {
