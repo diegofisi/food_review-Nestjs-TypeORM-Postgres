@@ -38,7 +38,7 @@ export class Post {
     type: 'text',
     nullable: true,
   })
-  url: Url;
+  url?: Url;
 
   @OneToMany(() => PostImage, (postImage) => postImage.post, {
     cascade: true,

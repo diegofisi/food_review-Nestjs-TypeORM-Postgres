@@ -38,9 +38,9 @@ export class AuthController {
     return this.authService.checkAuthStatus(user);
   }
 
-  @Get('private3')
-  @Auth(ValidRoles.user)
-  privateRoute3(@GetUser() user: User) {
-    return user;
-  }
+  // @Get('private3')
+  // @Auth(ValidRoles.user)
+  // privateRoute3(@GetUser() user: User) {
+  //   return user;
+  // }
 }

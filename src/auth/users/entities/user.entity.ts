@@ -49,7 +49,7 @@ export class User {
     array: true,
     default: ['user'],
   })
-  roles: string[];
+  roles?: string[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {

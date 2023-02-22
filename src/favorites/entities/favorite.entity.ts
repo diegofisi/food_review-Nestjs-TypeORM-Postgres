@@ -5,6 +5,7 @@ import { Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 export class Favorite {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
   @OneToMany(() => Post, (post) => post.favorites, {
     cascade: true,
     eager: true,
