@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import { Injectable } from '@nestjs/common';
-import { CreateImageDto } from './dto/create-image.dto';
 import { UpdateImageDto } from './dto/update-image.dto';
 import { PostImage } from './entities/image.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,24 +13,17 @@ export class ImagesService {
   ) {}
 
   async create(files: Express.Multer.File[]) {
-    const imagen: PostImage[] = [];
     const promiseImagen: Promise<PostImage>[] = [];
-    const secureUrl = files.map(async (file) => {
+
+    files.map(async (file) => {
+      const image = new PostImage();
       const bitmap = fs.readFileSync(file.path);
       const base64 = Buffer.from(bitmap).toString('base64');
-      // const buffer = Buffer.from(base64, 'base64');
-      // const tempFilePath = `${Date.now()}.jpg`;
-      // fs.writeFileSync(tempFilePath, buffer);
-      // const image = fs.readFileSync(tempFilePath);
-      // console.log(image);
-      // fs.unlinkSync(tempFilePath);
-      const image = new PostImage();
       image.image = base64;
-      imagen.push(image);
       promiseImagen.push(this.postImageRepository.save(image));
     });
-    const algo = await Promise.all(promiseImagen);
-    return { algo };
+
+    return await Promise.all(promiseImagen);
   }
 
   findAll() {

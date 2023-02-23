@@ -1,18 +1,18 @@
-import { Body, Controller, Post, UploadedFiles } from '@nestjs/common';
+import { Controller, Post, UploadedFiles } from '@nestjs/common';
 import { CustomImageInterceptor } from './decorators/imageInterceptor.decorator';
 import { customParseFilePipe } from './pipes/parseFile.pipe';
 import { ImagesService } from './images.service';
 
 @Controller('images')
 export class ImagesController {
-  constructor(private readonly ImagesService: ImagesService) {}
+  constructor(private readonly imagesService: ImagesService) {}
   @Post()
   @CustomImageInterceptor('files')
   uploadImage(
     @UploadedFiles(customParseFilePipe())
     files: Express.Multer.File[],
   ) {
-    return this.ImagesService.create(files);
+    return this.imagesService.create(files);
     // const secureUrl = files.map((file) => {
     //   const bitmap = fs.readFileSync(file.path);
     //   const base64 = Buffer.from(bitmap).toString('base64');
