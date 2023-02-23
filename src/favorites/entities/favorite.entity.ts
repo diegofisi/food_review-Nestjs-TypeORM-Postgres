@@ -9,6 +9,7 @@ export class Favorite {
   @OneToMany(() => Post, (post) => post.favorites, {
     cascade: true,
     eager: true,
+    nullable: true,
   })
   posts: Post[];
 }

@@ -25,7 +25,7 @@ export class Post {
     type: 'float',
     default: 0,
   })
-  stars: number;
+  stars?: number;
 
   @Column({
     type: 'text',
@@ -38,20 +38,25 @@ export class Post {
     type: 'text',
     nullable: true,
   })
-  url?: Url;
+  url?: string;
 
   @OneToMany(() => PostImage, (postImage) => postImage.post, {
     cascade: true,
     eager: true,
+    nullable: true,
   })
-  images: PostImage[];
+  images?: PostImage[];
 
-  @ManyToOne(() => Favorite, (favorites) => favorites.posts)
+  @ManyToOne(() => Favorite, (favorites) => favorites.posts, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   favorites: Favorite[];
 
   @OneToMany(() => Comment, (comment) => comment.post, {
     cascade: true,
     eager: true,
+    nullable: true,
   })
   comments: Comment[];
 }
