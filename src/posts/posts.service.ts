@@ -23,16 +23,20 @@ export class PostsService {
   ) {}
 
   async create(createPostDto: CreatePostDto) {
-    const favorites: Favorite[] = [];
-    const comments: Comment[] = [];
-    const imagenes: PostImage[] = [];
+    // const favorites: Favorite[] = [];
+    // const comments: Comment[] = [];
+    // const imagenes: PostImage[] = [];
     const { images, ...productDetails } = createPostDto;
+    const idImages = images.map((image) =>
+      this.postImageRepository.findOneBy({ id: image }),
+    );
+    const retorno = Promise.all(idImages);
     const post = this.postsRepository.create({
       ...productDetails,
-      images: images.map((image) => this.postImageRepository.create({ image })),
+      images: await retorno,
     });
-    //const poster = await this.postsRepository.save(post);
-    return post;
+    const poster = await this.postsRepository.save(post);
+    return poster;
   }
 
   findAll() {
