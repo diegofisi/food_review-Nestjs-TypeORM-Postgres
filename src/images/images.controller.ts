@@ -1,7 +1,8 @@
-import { Controller, Post, UploadedFiles } from '@nestjs/common';
+import { Body, Controller, Post, UploadedFiles } from '@nestjs/common';
 import { CustomImageInterceptor } from './decorators/imageInterceptor.decorator';
 import { customParseFilePipe } from './pipes/parseFile.pipe';
 import { ImagesService } from './images.service';
+import { CreateImageDto } from './dto/create-image.dto';
 
 @Controller('images')
 export class ImagesController {
@@ -11,7 +12,9 @@ export class ImagesController {
   uploadImage(
     @UploadedFiles(customParseFilePipe())
     files: Express.Multer.File[],
+    @Body() createImageDto: CreateImageDto,
   ) {
+    createImageDto;
     return this.imagesService.create(files);
     // const secureUrl = files.map((file) => {
     //   const bitmap = fs.readFileSync(file.path);

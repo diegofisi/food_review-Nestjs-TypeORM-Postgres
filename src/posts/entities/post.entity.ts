@@ -1,5 +1,4 @@
 import { Comment } from 'src/comments/entities/comment.entity';
-import { Url } from 'src/common/urls/entities/url.entity';
 import { PostImage } from 'src/images/entities/image.entity';
 import {
   Column,

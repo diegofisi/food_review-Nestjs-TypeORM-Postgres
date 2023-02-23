@@ -1,4 +1,4 @@
-import { Injectable, UseInterceptors } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Comment } from 'src/comments/entities/comment.entity';
 import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -30,10 +30,10 @@ export class PostsService {
     const idImages = images.map((image) =>
       this.postImageRepository.findOneBy({ id: image }),
     );
-    const retorno = Promise.all(idImages);
+    const imagesId = Promise.all(idImages);
     const post = this.postsRepository.create({
       ...productDetails,
-      images: await retorno,
+      images: await imagesId,
     });
     const poster = await this.postsRepository.save(post);
     return poster;
