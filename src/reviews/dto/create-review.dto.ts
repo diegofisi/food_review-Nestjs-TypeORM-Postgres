@@ -1,48 +1,42 @@
-import { Favorite } from 'src/favorites/entities/favorite.entity';
-import { IsArray, IsInstance, IsUrl, IsUUID } from 'class-validator';
 import {
+  IsDecimal,
+  IsInt,
   IsNumber,
+  IsNumberString,
   IsOptional,
   IsString,
   Max,
   Min,
   MinLength,
 } from 'class-validator';
-import { Opinion } from 'src/opinions/entities/opinion.entity';
-import { ReviewImage } from 'src/images/entities/image.entity';
+import { Type } from 'class-transformer';
+import { IsArray, IsUrl, ValidateNested } from 'class-validator';
+import { CreateImageDto } from 'src/images/dto/create-image.dto';
+import { Transform } from 'class-transformer/types/decorators';
 
-export class CreatePostDto {
+export class CreateReviewDto {
   @IsString()
   @MinLength(1)
   title: string;
 
-  @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
   @Min(0)
   @Max(5)
-  @IsOptional()
   stars?: number;
 
+  @IsOptional()
   @IsString()
   @MinLength(1)
-  @IsOptional()
   description?: string;
 
-  @IsUrl()
   @IsOptional()
+  @IsUrl()
   url?: string;
 
   @IsOptional()
   @IsArray()
-  @IsInstance(ReviewImage, { each: true })
-  images?: ReviewImage[];
-
-  @IsOptional()
-  @IsInstance(Favorite, { each: true })
-  @IsArray()
-  favorites: Favorite[];
-
-  @IsOptional()
-  @IsInstance(Opinion, { each: true })
-  @IsArray()
-  opinions: Opinion[];
+  @Type(() => CreateImageDto)
+  @ValidateNested({ each: true })
+  images?: CreateImageDto[];
 }

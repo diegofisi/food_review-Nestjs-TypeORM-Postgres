@@ -3,6 +3,7 @@ import { CustomImageInterceptor } from './decorators/avatarInterceptor.decorator
 import { FileValidatorsPipe } from './pipes/parseFile.pipe';
 import { CreateAvatarDto } from './dto/create-avatar.dto';
 import { AvatarService } from './avatar.service';
+import { Auth } from 'src/auth/decorators';
 
 @Controller('avatar')
 export class AvatarController {

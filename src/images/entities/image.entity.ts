@@ -3,7 +3,7 @@ import { ManyToOne, PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
 
 @Entity({ name: 'review_images' })
 export class ReviewImage {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: number;
 
   @Column({

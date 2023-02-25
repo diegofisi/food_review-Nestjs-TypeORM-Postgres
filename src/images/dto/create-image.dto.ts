@@ -1,4 +1,4 @@
-import { IsBase64, IsString } from 'class-validator';
+import { IsBase64, IsNumber, IsString } from 'class-validator';
 
 export class CreateImageDto {
   @IsString({
@@ -6,9 +6,6 @@ export class CreateImageDto {
   })
   filename: string;
 
-  @IsBase64({
-    message: 'La imagen debe estar en base64',
-    each: true,
-  })
+  @IsBase64()
   image: string;
 }

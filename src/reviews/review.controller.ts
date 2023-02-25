@@ -6,29 +6,37 @@ import {
   Param,
   Delete,
   Post,
+  UploadedFiles,
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
-import { UpdatePostDto } from './dto/update-review.dto';
+import { UpdateReviewDto } from './dto/update-review.dto';
 import { ImagesService } from 'src/images/images.service';
 import { ConfigService } from '@nestjs/config';
-import { CreatePostDto } from './dto/create-review.dto';
+import { CreateReviewDto } from './dto/create-review.dto';
+import { CustomImageInterceptor } from 'src/avatar/decorators/avatarInterceptor.decorator';
+import { FileValidatorsPipe } from 'src/avatar/pipes/parseFile.pipe';
 
 @Controller('reviews')
 export class ReviewController {
   constructor(
     private readonly reviewService: ReviewService,
-    private readonly imageService: ImagesService,
     private readonly configService: ConfigService,
   ) {}
 
-  // @Post()
-  // create(@Body() createPostDto: CreatePostDto) {
-  //   return this.postsService.create(createPostDto);
-  // }
-
   @Post()
-  async create(@Body() createPostDto: CreatePostDto) {
-    return;
+  async create(@Body() createReviewDto: CreateReviewDto) {
+    return await this.reviewService.create(createReviewDto);
+  }
+
+  //alternative way to upload images -> you can upload a file with form data
+  @Post('upload')
+  @CustomImageInterceptor('files')
+  async uploadImage(
+    @UploadedFiles(FileValidatorsPipe)
+    files: Express.Multer.File[],
+    @Body() createReviewDto: CreateReviewDto,
+  ) {
+    return await this.reviewService.create2(files, createReviewDto);
   }
 
   @Get()
@@ -42,8 +50,8 @@ export class ReviewController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.reviewService.update(+id, updatePostDto);
+  update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
+    return this.reviewService.update(+id, updateReviewDto);
   }
 
   @Delete(':id')
