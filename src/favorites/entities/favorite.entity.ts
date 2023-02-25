@@ -1,4 +1,4 @@
-import { Post } from 'src/posts/entities/post.entity';
+import { Review } from 'src/reviews/entities/review.entity';
 import { Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'favorites' })
@@ -6,10 +6,10 @@ export class Favorite {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToMany(() => Post, (post) => post.favorites, {
+  @OneToMany(() => Review, (review) => review.favorites, {
     cascade: true,
     eager: true,
     nullable: true,
   })
-  posts: Post[];
+  reviews: Review[];
 }

@@ -1,10 +1,16 @@
-import { Post } from 'src/posts/entities/post.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Review } from 'src/reviews/entities/review.entity';
+import { ManyToOne, PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
 
-@Entity({ name: 'post_images' })
-export class PostImage {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+@Entity({ name: 'review_images' })
+export class ReviewImage {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({
+    type: 'text',
+    nullable: false,
+  })
+  filename: string;
 
   @Column({
     type: 'text',
@@ -12,9 +18,9 @@ export class PostImage {
   })
   image: string;
 
-  @ManyToOne(() => Post, (post) => post.images, {
+  @ManyToOne(() => Review, (review) => review.images, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  post: Post;
+  review: Review;
 }

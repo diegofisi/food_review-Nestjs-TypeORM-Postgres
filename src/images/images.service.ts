@@ -1,28 +1,11 @@
-import * as fs from 'fs';
 import { Injectable } from '@nestjs/common';
-import { PostImage } from './entities/image.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { CreateImageDto } from './dto/create-image.dto';
+import { UpdateImageDto } from './dto/update-image.dto';
 
 @Injectable()
 export class ImagesService {
-  constructor(
-    @InjectRepository(PostImage)
-    private readonly postImageRepository: Repository<PostImage>,
-  ) {}
-
-  async create(files: Express.Multer.File[]) {
-    const images: Promise<PostImage>[] = [];
-
-    files.map(async (file) => {
-      const image = new PostImage();
-      const bitmap = fs.readFileSync(file.path);
-      const base64 = Buffer.from(bitmap).toString('base64');
-      image.image = base64;
-      images.push(this.postImageRepository.save(image));
-    });
-
-    return await Promise.all(images);
+  create(createImageDto: CreateImageDto) {
+    return 'This action adds a new image';
   }
 
   findAll() {
@@ -31,6 +14,10 @@ export class ImagesService {
 
   findOne(id: number) {
     return `This action returns a #${id} image`;
+  }
+
+  update(id: number, updateImageDto: UpdateImageDto) {
+    return `This action updates a #${id} image`;
   }
 
   remove(id: number) {

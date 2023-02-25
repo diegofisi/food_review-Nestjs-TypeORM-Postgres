@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from './auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PostsModule } from './posts/posts.module';
-import { ImagesModule } from './images/images.module';
-import { CommentsModule } from './comments/comments.module';
+import { ConfigModule } from '@nestjs/config';
+
+import { AuthModule } from './auth/auth.module';
+import { AvatarModule } from './avatar/avatar.module';
 import { FavoritesModule } from './favorites/favorites.module';
-import { CommonModule } from './common/urls/urls.module';
+import { ImagesModule } from './images/images.module';
+import { OpinionModule } from './opinions/opinions.module';
+import { ProfileModule } from './profile/profile.module';
+import { ReviewModule } from './reviews/review.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -22,11 +25,13 @@ import { CommonModule } from './common/urls/urls.module';
       synchronize: true,
     }),
     AuthModule,
-    PostsModule,
+    ReviewModule,
     ImagesModule,
     CommonModule,
-    CommentsModule,
+    OpinionModule,
     FavoritesModule,
+    ProfileModule,
+    AvatarModule,
   ],
   controllers: [],
   providers: [],
