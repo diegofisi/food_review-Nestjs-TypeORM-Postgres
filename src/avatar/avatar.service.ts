@@ -27,15 +27,30 @@ export class AvatarService {
     return await Promise.all(images);
   }
 
-  findAll() {
-    return `This action returns all images`;
+  async findAll(user: User) {
+    const id = user.id;
+    const avatar = await this.avatarRepository.find({
+      where: {
+        user: {
+          id,
+        },
+      },
+    });
+    avatar.map((avatar) => delete avatar.image);
+    return avatar;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} image`;
-  }
+  async remove(user: User) {
+    const id = user.id;
+    const avatar = await this.avatarRepository.find({
+      where: {
+        user: {
+          id,
+        },
+      },
+    });
 
-  remove(id: number) {
-    return `This action removes a #${id} image`;
+    const idAvatar = await this.avatarRepository.delete(id);
+    return `${idAvatar.toString()} was deleted`;
   }
 }

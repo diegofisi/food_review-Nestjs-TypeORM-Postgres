@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { User } from 'src/auth/users/entities/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -12,6 +13,12 @@ export class Avatar {
   })
   image: string;
 
-  @ManyToOne(() => User, (user) => user.avatars)
+  @Transform(({ value }) => {
+    return value.id;
+  })
+  @ManyToOne(() => User, (user) => user.avatars, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   user: User;
 }

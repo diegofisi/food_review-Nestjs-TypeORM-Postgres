@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { Avatar } from 'src/avatar/entities/avatar.entity';
 import { OneToMany } from 'typeorm';
 import {
@@ -53,7 +54,12 @@ export class User {
   })
   roles?: string[];
 
-  @OneToMany(() => Avatar, (avatar) => avatar.user)
+  // @Transform(({ value }) => {
+  //   return value.map((image: Avatar) => image.id);
+  // })
+  @OneToMany(() => Avatar, (avatar) => avatar.user, {
+    cascade: true,
+  })
   avatars: Avatar[];
 
   @BeforeInsert()
