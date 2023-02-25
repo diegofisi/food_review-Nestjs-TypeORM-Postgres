@@ -1,3 +1,5 @@
+import { Avatar } from 'src/avatar/entities/avatar.entity';
+import { OneToMany } from 'typeorm';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -50,6 +52,9 @@ export class User {
     default: ['user'],
   })
   roles?: string[];
+
+  @OneToMany(() => Avatar, (avatar) => avatar.user)
+  avatars: Avatar[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {
