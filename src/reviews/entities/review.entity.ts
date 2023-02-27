@@ -1,8 +1,10 @@
+import { User } from 'src/auth/users/entities/user.entity';
 import { ReviewImage } from 'src/images/entities/image.entity';
 import { Opinion } from 'src/opinions/entities/opinion.entity';
 import {
   Column,
   Entity,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -39,20 +41,36 @@ export class Review {
   })
   url?: string;
 
+  // @Column({
+  //   type: 'text',
+  //   nullable: true,
+  // })
+  // createdBy?: User;
+
+  // @Column({
+  //   type: 'text',
+  //   nullable: true,
+  // })
+  // updatedBy?: User;
+
+  // @Column({
+  //   type: 'text',
+  //   nullable: true,
+  // })
+  // deletedAt: Date;
+
+  @ManyToMany(() => Favorite, (favorite) => favorite.reviews, {
+    nullable: true,
+  })
+  favorites: Favorite[];
+
   @OneToMany(() => ReviewImage, (postImage) => postImage.review, {
     cascade: true,
     eager: true,
   })
   images?: ReviewImage[];
 
-  @ManyToOne(() => Favorite, (favorites) => favorites.reviews, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
-  favorites: Favorite[];
-
   @OneToMany(() => Opinion, (opinion) => opinion.review, {
-    cascade: true,
     eager: true,
     nullable: true,
   })

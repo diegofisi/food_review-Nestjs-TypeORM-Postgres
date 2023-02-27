@@ -15,6 +15,7 @@ import { UpdateReviewDto } from './dto/update-review.dto';
 import { Review } from './entities/review.entity';
 import { ReviewImage } from 'src/images/entities/image.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Injectable()
 export class ReviewService {
@@ -102,11 +103,22 @@ export class ReviewService {
   //   return poster;
   // }
 
-  findAll() {
-    return `This action returns all posts`;
+  async findAll(paginationDto: PaginationDto) {
+    const {
+      limit = this.configService.get('LIMIT'),
+      offset = this.configService.get('OFFSET'),
+    } = paginationDto;
+    const review = await this.reviewRepository.find({
+      take: limit,
+      skip: offset,
+      // relations: {
+      //   images: true,
+      // },
+    });
+    return review;
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return `This action returns a #${id} post`;
   }
 

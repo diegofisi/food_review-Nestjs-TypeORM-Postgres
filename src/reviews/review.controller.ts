@@ -7,6 +7,8 @@ import {
   Delete,
   Post,
   UploadedFiles,
+  Query,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { UpdateReviewDto } from './dto/update-review.dto';
@@ -15,6 +17,8 @@ import { ConfigService } from '@nestjs/config';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { CustomImageInterceptor } from 'src/avatar/decorators/avatarInterceptor.decorator';
 import { FileValidatorsPipe } from 'src/avatar/pipes/parseFile.pipe';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { Auth } from 'src/auth/decorators';
 
 @Controller('reviews')
 export class ReviewController {
@@ -24,12 +28,14 @@ export class ReviewController {
   ) {}
 
   @Post()
+  @Auth()
   async create(@Body() createReviewDto: CreateReviewDto) {
     return await this.reviewService.create(createReviewDto);
   }
 
   //alternative way to upload images -> you can upload a file with form data
   @Post('upload')
+  @Auth()
   @CustomImageInterceptor('files')
   async uploadImage(
     @UploadedFiles(FileValidatorsPipe)
@@ -40,21 +46,23 @@ export class ReviewController {
   }
 
   @Get()
-  findAll() {
-    return this.reviewService.findAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.reviewService.findAll(paginationDto);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reviewService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.reviewService.findOne(id);
   }
 
   @Patch(':id')
+  @Auth()
   update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
     return this.reviewService.update(+id, updateReviewDto);
   }
 
   @Delete(':id')
+  @Auth()
   remove(@Param('id') id: string) {
     return this.reviewService.remove(+id);
   }

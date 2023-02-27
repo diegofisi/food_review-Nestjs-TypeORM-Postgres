@@ -1,6 +1,7 @@
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { Avatar } from 'src/avatar/entities/avatar.entity';
-import { OneToMany } from 'typeorm';
+import { Favorite } from 'src/favorites/entities/favorite.entity';
+import { JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -38,6 +39,7 @@ export class User {
 
   @Column({
     type: 'text',
+    default: 'Reviewer',
   })
   nickname: string;
 
@@ -47,6 +49,13 @@ export class User {
   })
   isActive: boolean;
 
+  @OneToOne(() => Favorite, (favorite) => favorite.user, {
+    cascade: true,
+    eager: true,
+  })
+  @JoinColumn()
+  favorites: Favorite;
+
   @Column({
     type: 'text',
     array: true,
@@ -54,11 +63,16 @@ export class User {
   })
   roles?: string[];
 
-  // @Transform(({ value }) => {
-  //   return value.map((image: Avatar) => image.id);
-  // })
+  @OneToOne(() => Avatar, (avatar) => avatar.user, {
+    cascade: true,
+    eager: true,
+  })
+  @JoinColumn()
+  avatar: Avatar;
+
   @OneToMany(() => Avatar, (avatar) => avatar.user, {
     cascade: true,
+    eager: true,
   })
   avatars: Avatar[];
 

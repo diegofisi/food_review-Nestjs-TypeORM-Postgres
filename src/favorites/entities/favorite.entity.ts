@@ -1,15 +1,28 @@
+import { User } from 'src/auth/users/entities/user.entity';
 import { Review } from 'src/reviews/entities/review.entity';
-import { Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, OneToOne, ManyToMany } from 'typeorm';
 
 @Entity({ name: 'favorites' })
 export class Favorite {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToMany(() => Review, (review) => review.favorites, {
-    cascade: true,
-    eager: true,
+  @OneToOne(() => User, (user) => user.favorites, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  user: User;
+
+  @ManyToMany(() => Review, (review) => review.favorites, {
     nullable: true,
+    onDelete: 'CASCADE',
   })
   reviews: Review[];
+
+  // @OneToMany(() => Review, (review) => review.favorites, {
+  //   cascade: true,
+  //   eager: true,
+  //   nullable: true,
+  // })
+  // reviews: Review[];
 }

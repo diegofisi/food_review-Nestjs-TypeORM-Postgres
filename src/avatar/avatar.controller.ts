@@ -6,7 +6,9 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
+  Query,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -16,6 +18,7 @@ import { CreateAvatarDto } from './dto/create-avatar.dto';
 import { AvatarService } from './avatar.service';
 import { Auth, GetUser } from 'src/auth/decorators';
 import { User } from 'src/auth/users/entities/user.entity';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('avatar')
@@ -36,17 +39,19 @@ export class AvatarController {
 
   @Get()
   @Auth()
-  findAll(@GetUser() user: User) {
-    return this.avatarService.findAll(user);
+  findAll(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
+    return this.avatarService.findAll(paginationDto, user);
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.avatarService.findOne(+id);
-  // }
+  @Patch(':id')
+  @Auth()
+  update(@Param('id', ParseUUIDPipe) idAvatar, @GetUser() user: User) {
+    return this.avatarService.update(idAvatar, user);
+  }
+
   @Delete(':id')
   @Auth()
   remove(@Param('id', ParseUUIDPipe) idAvatar, @GetUser() user: User) {
-    return this.avatarService.remove(idAvatar);
+    return this.avatarService.remove(idAvatar, user);
   }
 }

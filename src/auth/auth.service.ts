@@ -11,6 +11,8 @@ import { User } from './users/entities/user.entity';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto, DeleteUserDto, LoginUserDto } from './users/dto';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +20,7 @@ export class AuthService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
+    private readonly configservice: ConfigService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -46,6 +49,8 @@ export class AuthService {
     if (!bcrypt.compareSync(password, user.password))
       throw new UnauthorizedException('Credentials are not valid (password)');
 
+    user.avatars.map((avatar) => delete avatar.image);
+
     return {
       ...user,
       token: this.getJwtToken({ id: user.id }),
@@ -57,6 +62,23 @@ export class AuthService {
       user.isActive = false;
       await this.userRepository.save(user);
       return { message: 'User deleted' };
+    } catch (error) {
+      this.handleDBErrors(error);
+    }
+  }
+
+  async getAllUsers(paginationDto: PaginationDto) {
+    const {
+      limit = this.configservice.get('LIMIT'),
+      offset = this.configservice.get('OFFSET'),
+    } = paginationDto;
+    try {
+      const users = await this.userRepository.find({
+        take: limit,
+        skip: offset,
+        relations: {},
+      });
+      return users;
     } catch (error) {
       this.handleDBErrors(error);
     }

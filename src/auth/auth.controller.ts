@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Query,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  Patch,
+} from '@nestjs/common';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { AuthService } from './auth.service';
 import { Auth, GetUser } from './decorators';
 import { ValidRoles } from './interfaces/valid-roles';
@@ -7,6 +17,7 @@ import { DeleteUserDto } from './users/dto/delete-user.dto';
 import { LoginUserDto } from './users/dto/login-user.dto';
 import { User } from './users/entities/user.entity';
 @Controller('auth')
+@UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -38,7 +49,19 @@ export class AuthController {
     return this.authService.checkAuthStatus(user);
   }
 
-  // @Get('private3')
+  @Get('users')
+  @Auth(ValidRoles.admin, ValidRoles.superUser)
+  getAllUsers(@Query() paginationDto: PaginationDto) {
+    return this.authService.getAllUsers(paginationDto);
+  }
+
+  @Patch()
+  @Auth()
+  updateUser(@Body() updateUserDto: CreateUserDto, @GetUser() user: User) {
+    return user;
+  }
+
+  // @Get('test-private-route')
   // @Auth(ValidRoles.user)
   // privateRoute3(@GetUser() user: User) {
   //   return user;
