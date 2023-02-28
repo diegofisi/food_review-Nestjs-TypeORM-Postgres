@@ -15,20 +15,30 @@ export class AvatarService {
     private readonly configService: ConfigService,
   ) {}
 
-  async create(files: Express.Multer.File[], user: User) {
-    const images: Promise<Avatar>[] = [];
+  // async create2(files: Express.Multer.File[], user: User) {
+  //   const images: Promise<Avatar>[] = [];
 
-    files.map((file) => {
-      const image = new Avatar();
-      const bitmap = fs.readFileSync(file.path);
-      const base64 = Buffer.from(bitmap).toString('base64');
-      image.image = base64;
-      image.user = user;
-      if (!user.avatar) user.avatar = image;
-      images.push(this.avatarRepository.save(image));
-    });
+  //   files.map((file) => {
+  //     const image = new Avatar();
+  //     const bitmap = fs.readFileSync(file.path);
+  //     const base64 = Buffer.from(bitmap).toString('base64');
+  //     image.image = base64;
+  //     image.user = user;
+  //     if (!user.avatar) user.avatar = image;
+  //     images.push(this.avatarRepository.save(image));
+  //   });
 
-    return await Promise.all(images);
+  //   return await Promise.all(images);
+  // }
+
+  async create(file: Express.Multer.File, user: User) {
+    const image = new Avatar();
+    const bitmap = fs.readFileSync(file.path);
+    const base64 = Buffer.from(bitmap).toString('base64');
+    image.image = base64;
+    if (user.avatar) return (user.avatar = image);
+    image.user = user;
+    return await this.avatarRepository.save(image);
   }
 
   async findAll(paginationDto: PaginationDto, user: User) {
@@ -39,14 +49,14 @@ export class AvatarService {
     const avatar = await this.avatarRepository.find({
       take: limit,
       skip: offset,
-      relations: {
-        user: true,
-      },
-      where: {
-        user: {
-          id: user.id,
-        },
-      },
+      // relations: {
+      //   user: true,
+      // },
+      // where: {
+      //   user: {
+      //     id: user.id,
+      //   },
+      // },
     });
     avatar.map((avatar) => delete avatar.image);
     return avatar;

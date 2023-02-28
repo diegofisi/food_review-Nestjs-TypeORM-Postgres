@@ -1,9 +1,9 @@
 import { BadRequestException, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { imageNamer } from '../helpers/avatarNamer.helper';
+import { imageNamer } from '../helpers/imageNamer.helper';
 
-export const CustomImageInterceptor = (arg: string) => {
+export const CustomImagesInterceptor = (arg: string) => {
   return UseInterceptors(
     FilesInterceptor(arg, 3, {
       /*you can delete storage option
@@ -15,6 +15,7 @@ export const CustomImageInterceptor = (arg: string) => {
       }),
       limits: {
         fileSize: 1024 * 1024 * 3, // 3MB
+        files: 3,
       },
       fileFilter: (req, file, callback) => {
         if (!file.originalname.match(/\.(png|jpeg|jpg|gif)$/)) {

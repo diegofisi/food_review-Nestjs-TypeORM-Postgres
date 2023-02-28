@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 @Injectable()
 export class BodySizeMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
-    const limit = 3 * 1024 * 1024; // 3MB;
+    const limit = 4 * 1024 * 1024; // 3MB;
     if (req.is('json')) {
       if (
         req.body &&

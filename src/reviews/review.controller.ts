@@ -15,10 +15,10 @@ import { UpdateReviewDto } from './dto/update-review.dto';
 import { ImagesService } from 'src/images/images.service';
 import { ConfigService } from '@nestjs/config';
 import { CreateReviewDto } from './dto/create-review.dto';
-import { CustomImageInterceptor } from 'src/avatar/decorators/avatarInterceptor.decorator';
-import { FileValidatorsPipe } from 'src/avatar/pipes/parseFile.pipe';
+import { FileValidatorsPipe } from 'src/common/pipes/parseFile.pipe';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { Auth } from 'src/auth/decorators';
+import { CustomImagesInterceptor } from 'src/common/interceptors/images.interceptor';
 
 @Controller('reviews')
 export class ReviewController {
@@ -36,7 +36,7 @@ export class ReviewController {
   //alternative way to upload images -> you can upload a file with form data
   @Post('upload')
   @Auth()
-  @CustomImageInterceptor('files')
+  @CustomImagesInterceptor('files')
   async uploadImage(
     @UploadedFiles(FileValidatorsPipe)
     files: Express.Multer.File[],

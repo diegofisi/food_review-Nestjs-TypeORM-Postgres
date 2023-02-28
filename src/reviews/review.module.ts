@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ReviewImage } from 'src/images/entities/image.entity';
 import { Review } from './entities/review.entity';
 import { FavoritesModule } from 'src/favorites/favorites.module';
+import { CommonModule } from '../common/common.module';
 
 @Module({
   controllers: [ReviewController],
@@ -17,6 +18,7 @@ import { FavoritesModule } from 'src/favorites/favorites.module';
     AuthModule,
     ImagesModule,
     ConfigModule,
+    CommonModule,
   ],
   exports: [ReviewService],
 })

@@ -49,6 +49,12 @@ export class User {
   })
   isActive: boolean;
 
+  // @Column({
+  //   type: 'timestamp',
+  //   default: () => 'CURRENT_TIMESTAMP',
+  // })
+  // createdAt: Date;
+
   @OneToOne(() => Favorite, (favorite) => favorite.user, {
     cascade: true,
     eager: true,
@@ -66,15 +72,16 @@ export class User {
   @OneToOne(() => Avatar, (avatar) => avatar.user, {
     cascade: true,
     eager: true,
+    onDelete: 'CASCADE',
   })
   @JoinColumn()
   avatar: Avatar;
 
-  @OneToMany(() => Avatar, (avatar) => avatar.user, {
-    cascade: true,
-    eager: true,
-  })
-  avatars: Avatar[];
+  // @OneToMany(() => Avatar, (avatar) => avatar.user, {
+  //   cascade: true,
+  //   eager: true,
+  // })
+  // avatars: Avatar[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {
