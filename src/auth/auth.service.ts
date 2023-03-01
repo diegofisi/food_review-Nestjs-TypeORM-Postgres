@@ -13,25 +13,33 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto, DeleteUserDto, LoginUserDto } from './users/dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { ConfigService } from '@nestjs/config';
+import { Profile } from 'src/profile/entities/profile.entity';
+import { CreateAvatarDto } from '../avatar/dto/create-avatar.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Profile)
+    private readonly profileRepository: Repository<Profile>,
     private readonly jwtService: JwtService,
     private readonly configservice: ConfigService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
     try {
-      const { password, ...userData } = createUserDto;
+      const { password, nickname, ...userData } = createUserDto;
       const user = this.userRepository.create({
         ...userData,
         password: bcrypt.hashSync(password, 10),
       });
-      await this.userRepository.save(user);
-      delete user.password;
+      const profile = this.profileRepository.create({
+        nickname,
+      });
+      const userInfo = await this.userRepository.save(user);
+      profile.user = userInfo;
+      await this.profileRepository.save(profile);
     } catch (error) {
       this.handleDBErrors(error);
     }
@@ -43,13 +51,11 @@ export class AuthService {
       where: { email },
       select: { email: true, password: true, id: true },
     });
-
     if (!user)
       throw new UnauthorizedException('Credentials are not valid (email)');
     if (!bcrypt.compareSync(password, user.password))
       throw new UnauthorizedException('Credentials are not valid (password)');
-
-    delete user.avatar.image;
+    //if (user.avatar) delete user.avatar.image;
     return {
       ...user,
       token: this.getJwtToken({ id: user.id }),
@@ -71,16 +77,12 @@ export class AuthService {
       limit = this.configservice.get('LIMIT'),
       offset = this.configservice.get('OFFSET'),
     } = paginationDto;
-    try {
-      const users = await this.userRepository.find({
-        take: limit,
-        skip: offset,
-        relations: {},
-      });
-      return users;
-    } catch (error) {
-      this.handleDBErrors(error);
-    }
+    const users = await this.userRepository.find({
+      take: limit,
+      skip: offset,
+      relations: {},
+    });
+    return users;
   }
 
   async deleteUser(deleteUserDto: DeleteUserDto) {

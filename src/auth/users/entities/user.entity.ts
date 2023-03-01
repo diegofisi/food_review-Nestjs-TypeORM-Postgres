@@ -2,6 +2,7 @@ import { Transform, Type } from 'class-transformer';
 import { Avatar } from 'src/avatar/entities/avatar.entity';
 import { Favorite } from 'src/favorites/entities/favorite.entity';
 import { JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import { Profile } from '../../../profile/entities/profile.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -37,11 +38,11 @@ export class User {
   })
   password: string;
 
-  @Column({
-    type: 'text',
-    default: 'Reviewer',
-  })
-  nickname: string;
+  // @Column({
+  //   type: 'text',
+  //   default: 'Reviewer',
+  // })
+  // nickname: string;
 
   @Column({
     type: 'bool',
@@ -49,11 +50,11 @@ export class User {
   })
   isActive: boolean;
 
-  // @Column({
-  //   type: 'timestamp',
-  //   default: () => 'CURRENT_TIMESTAMP',
-  // })
-  // createdAt: Date;
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
 
   @OneToOne(() => Favorite, (favorite) => favorite.user, {
     cascade: true,
@@ -69,13 +70,18 @@ export class User {
   })
   roles?: string[];
 
-  @OneToOne(() => Avatar, (avatar) => avatar.user, {
+  // @OneToOne(() => Avatar, (avatar) => avatar.user, {
+  //   cascade: true,
+  //   eager: true,
+  // })
+  // avatar: Avatar;
+
+  @OneToOne(() => Profile, (profile) => profile.user, {
     cascade: true,
     eager: true,
-    onDelete: 'CASCADE',
   })
   @JoinColumn()
-  avatar: Avatar;
+  profile: Profile;
 
   // @OneToMany(() => Avatar, (avatar) => avatar.user, {
   //   cascade: true,

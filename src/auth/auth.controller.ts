@@ -60,10 +60,4 @@ export class AuthController {
   updateUser(@Body() updateUserDto: CreateUserDto, @GetUser() user: User) {
     return user;
   }
-
-  // @Get('test-private-route')
-  // @Auth(ValidRoles.user)
-  // privateRoute3(@GetUser() user: User) {
-  //   return user;
-  // }
 }

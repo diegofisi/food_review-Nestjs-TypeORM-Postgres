@@ -1,6 +1,13 @@
 import { Transform } from 'class-transformer';
 import { User } from 'src/auth/users/entities/user.entity';
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Profile } from '../../profile/entities/profile.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'avatars' })
 export class Avatar {
@@ -10,14 +17,12 @@ export class Avatar {
   @Column({
     type: 'text',
     nullable: false,
+    //select: false,
   })
   image: string;
 
-  @Transform(({ value }) => {
-    return value.id;
-  })
-  @OneToOne(() => User, (user) => user.avatar)
-  user: User;
+  @OneToOne(() => Profile, (profile) => profile.avatar)
+  profile: Profile;
 
   // @Transform(({ value }) => {
   //   return value.id;

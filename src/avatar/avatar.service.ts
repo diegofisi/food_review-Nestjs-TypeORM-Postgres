@@ -6,12 +6,15 @@ import { Avatar } from './entities/avatar.entity';
 import { User } from 'src/auth/users/entities/user.entity';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { ConfigService } from '@nestjs/config';
+import { Profile } from 'src/profile/entities/profile.entity';
 
 @Injectable()
 export class AvatarService {
   constructor(
     @InjectRepository(Avatar)
     private readonly avatarRepository: Repository<Avatar>,
+    @InjectRepository(Profile)
+    private readonly profileRepository: Repository<Profile>,
     private readonly configService: ConfigService,
   ) {}
 
@@ -32,13 +35,18 @@ export class AvatarService {
   // }
 
   async create(file: Express.Multer.File, user: User) {
+    const profile = await this.getProfile(user);
     const image = new Avatar();
     const bitmap = fs.readFileSync(file.path);
     const base64 = Buffer.from(bitmap).toString('base64');
     image.image = base64;
-    if (user.avatar) return (user.avatar = image);
-    image.user = user;
-    return await this.avatarRepository.save(image);
+    if (!profile.avatar) {
+      const avatar = await this.avatarRepository.save(image);
+      profile.avatar = avatar;
+      await this.profileRepository.save(profile);
+    }
+    profile.avatar.image = image.image;
+    await this.profileRepository.save(profile);
   }
 
   async findAll(paginationDto: PaginationDto, user: User) {
@@ -63,11 +71,13 @@ export class AvatarService {
   }
 
   async update(id: string, user: User) {
+    const profile = await this.getProfile(user);
+
     const avatar = await this.avatarRepository.findOne({
       where: {
         id: id,
-        user: {
-          id: user.id,
+        profile: {
+          id: profile.id,
         },
       },
     });
@@ -75,20 +85,21 @@ export class AvatarService {
     if (!avatar) throw new NotFoundException(`Avatar with id: ${id} not found`);
 
     if (avatar) {
-      user.avatar = avatar;
-      await this.avatarRepository.save(user.avatar);
-      delete user.avatar.image;
+      profile.avatar = avatar;
+      await this.avatarRepository.save(profile.avatar);
+      delete profile.avatar.image;
     }
-    return user.avatar;
+    return profile.avatar;
   }
 
   async remove(id: string, user: User) {
+    const profile = await this.getProfile(user);
     const avatar = await this.avatarRepository.find({
       where: {
-        user: {
-          id: user.id,
-        },
         id: id,
+        profile: {
+          id: profile.id,
+        },
       },
     });
 
@@ -101,5 +112,9 @@ export class AvatarService {
     }
 
     return 'You are not allowed to delete this avatar';
+  }
+
+  async getProfile(user: User) {
+    return await this.profileRepository.findOneBy({ id: user.profile.id });
   }
 }
