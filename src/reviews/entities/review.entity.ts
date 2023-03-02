@@ -4,6 +4,7 @@ import { Opinion } from 'src/opinions/entities/opinion.entity';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToMany,
   ManyToOne,
   OneToMany,
@@ -41,23 +42,12 @@ export class Review {
   })
   url?: string;
 
-  // @Column({
-  //   type: 'text',
-  //   nullable: true,
-  // })
-  // createdBy?: User;
-
-  // @Column({
-  //   type: 'text',
-  //   nullable: true,
-  // })
-  // updatedBy?: User;
-
-  // @Column({
-  //   type: 'text',
-  //   nullable: true,
-  // })
-  // deletedAt: Date;
+  @ManyToOne(() => User, (user) => user.reviews, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn()
+  user: User;
 
   @ManyToMany(() => Favorite, (favorite) => favorite.reviews, {
     nullable: true,
@@ -71,6 +61,7 @@ export class Review {
   images?: ReviewImage[];
 
   @OneToMany(() => Opinion, (opinion) => opinion.review, {
+    cascade: true,
     eager: true,
     nullable: true,
   })

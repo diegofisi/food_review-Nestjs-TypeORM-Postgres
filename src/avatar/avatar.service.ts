@@ -49,70 +49,70 @@ export class AvatarService {
     await this.profileRepository.save(profile);
   }
 
-  async findAll(paginationDto: PaginationDto, user: User) {
-    const {
-      limit = this.configService.get('LIMIT'),
-      offset = this.configService.get('OFFSET'),
-    } = paginationDto;
-    const avatar = await this.avatarRepository.find({
-      take: limit,
-      skip: offset,
-      // relations: {
-      //   user: true,
-      // },
-      // where: {
-      //   user: {
-      //     id: user.id,
-      //   },
-      // },
-    });
-    avatar.map((avatar) => delete avatar.image);
-    return avatar;
-  }
+  // async findAll(paginationDto: PaginationDto, user: User) {
+  //   const {
+  //     limit = this.configService.get('LIMIT'),
+  //     offset = this.configService.get('OFFSET'),
+  //   } = paginationDto;
+  //   const avatar = await this.avatarRepository.find({
+  //     take: limit,
+  //     skip: offset,
+  //     // relations: {
+  //     //   user: true,
+  //     // },
+  //     // where: {
+  //     //   user: {
+  //     //     id: user.id,
+  //     //   },
+  //     // },
+  //   });
+  //   avatar.map((avatar) => delete avatar.image);
+  //   return avatar;
+  // }
 
-  async update(id: string, user: User) {
-    const profile = await this.getProfile(user);
+  // async update(id: string, user: User) {
+  //   const profile = await this.getProfile(user);
 
-    const avatar = await this.avatarRepository.findOne({
-      where: {
-        id: id,
-        profile: {
-          id: profile.id,
-        },
-      },
-    });
+  //   const avatar = await this.avatarRepository.findOne({
+  //     where: {
+  //       id: id,
+  //       profile: {
+  //         id: profile.id,
+  //       },
+  //     },
+  //   });
 
-    if (!avatar) throw new NotFoundException(`Avatar with id: ${id} not found`);
+  //   if (!avatar) throw new NotFoundException(`Avatar with id: ${id} not found`);
 
-    if (avatar) {
-      profile.avatar = avatar;
-      await this.avatarRepository.save(profile.avatar);
-      delete profile.avatar.image;
-    }
-    return profile.avatar;
-  }
+  //   if (avatar) {
+  //     profile.avatar = avatar;
+  //     await this.avatarRepository.save(profile.avatar);
+  //     delete profile.avatar.image;
+  //   }
+  //   return profile.avatar;
+  // }
 
-  async remove(id: string, user: User) {
-    const profile = await this.getProfile(user);
-    const avatar = await this.avatarRepository.find({
-      where: {
-        id: id,
-        profile: {
-          id: profile.id,
-        },
-      },
-    });
+  // async remove(id: string, user: User) {
+  //   const profile = await this.getProfile(user);
+  //   const avatar = await this.avatarRepository.find({
+  //     where: {
+  //       id: id,
+  //       profile: {
+  //         id: profile.id,
+  //       },
+  //     },
+  //   });
 
-    if (!avatar || avatar.length === 0)
-      throw new NotFoundException(`Product with id: ${id} not found`);
+  //   if (!avatar || avatar.length === 0)
+  //     throw new NotFoundException(`Product with id: ${id} not found`);
 
-    if (avatar && avatar.length > 0) {
-      await this.avatarRepository.delete(id);
-      return `Avatar with id: ${id} was deleted`;
-    }
+  //   if (avatar && avatar.length > 0) {
+  //     await this.avatarRepository.delete(id);
+  //     return `Avatar with id: ${id} was deleted`;
+  //   }
 
-    return 'You are not allowed to delete this avatar';
-  }
+  //   return 'You are not allowed to delete this avatar';
+  // }
 
   async getProfile(user: User) {
     return await this.profileRepository.findOneBy({ id: user.profile.id });

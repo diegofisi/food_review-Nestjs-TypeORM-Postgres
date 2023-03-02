@@ -17,11 +17,14 @@ export class Avatar {
   @Column({
     type: 'text',
     nullable: false,
-    //select: false,
   })
   image: string;
 
-  @OneToOne(() => Profile, (profile) => profile.avatar)
+  @OneToOne(() => Profile, (profile) => profile.avatar, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn()
   profile: Profile;
 
   // @Transform(({ value }) => {

@@ -27,14 +27,19 @@ export class ReviewController {
     private readonly configService: ConfigService,
   ) {}
 
-  @Post()
-  @Auth()
-  async create(@Body() createReviewDto: CreateReviewDto) {
-    return await this.reviewService.create(createReviewDto);
+  @Get()
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.reviewService.findAll(paginationDto);
+  }
+
+  @Get(':id')
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.reviewService.findOne(id);
   }
 
   //alternative way to upload images -> you can upload a file with form data
-  @Post('upload')
+  // it's more simple than the post 'upload' way
+  @Post()
   @Auth()
   @CustomImagesInterceptor('files')
   async uploadImage(
@@ -45,14 +50,10 @@ export class ReviewController {
     return await this.reviewService.create2(files, createReviewDto);
   }
 
-  @Get()
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.reviewService.findAll(paginationDto);
-  }
-
-  @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.reviewService.findOne(id);
+  @Post('upload')
+  @Auth()
+  async create(@Body() createReviewDto: CreateReviewDto) {
+    return await this.reviewService.create(createReviewDto);
   }
 
   @Patch(':id')

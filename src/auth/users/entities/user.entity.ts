@@ -1,8 +1,7 @@
-import { Transform, Type } from 'class-transformer';
-import { Avatar } from 'src/avatar/entities/avatar.entity';
 import { Favorite } from 'src/favorites/entities/favorite.entity';
-import { JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import { JoinColumn, OneToOne, OneToMany } from 'typeorm';
 import { Profile } from '../../../profile/entities/profile.entity';
+import { Review } from '../../../reviews/entities/review.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -10,6 +9,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Transform } from 'class-transformer';
 
 @Entity({ name: 'users' })
 export class User {
@@ -38,12 +38,6 @@ export class User {
   })
   password: string;
 
-  // @Column({
-  //   type: 'text',
-  //   default: 'Reviewer',
-  // })
-  // nickname: string;
-
   @Column({
     type: 'bool',
     default: true,
@@ -63,6 +57,11 @@ export class User {
   @JoinColumn()
   favorites: Favorite;
 
+  @OneToMany(() => Review, (review) => review.user, {
+    cascade: true,
+  })
+  reviews: Review[];
+
   @Column({
     type: 'text',
     array: true,
@@ -70,24 +69,11 @@ export class User {
   })
   roles?: string[];
 
-  // @OneToOne(() => Avatar, (avatar) => avatar.user, {
-  //   cascade: true,
-  //   eager: true,
-  // })
-  // avatar: Avatar;
-
   @OneToOne(() => Profile, (profile) => profile.user, {
     cascade: true,
     eager: true,
   })
-  @JoinColumn()
   profile: Profile;
-
-  // @OneToMany(() => Avatar, (avatar) => avatar.user, {
-  //   cascade: true,
-  //   eager: true,
-  // })
-  // avatars: Avatar[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {

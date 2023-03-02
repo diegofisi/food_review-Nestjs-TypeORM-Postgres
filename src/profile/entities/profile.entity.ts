@@ -24,13 +24,20 @@ export class Profile {
     eager: true,
     nullable: true,
   })
-  @JoinColumn()
   avatar: Avatar;
+
+  // @OneToOne(() => Favorite, (favorite) => favorite.user, {
+  //   cascade: true,
+  //   eager: true,
+  // })
+  // @JoinColumn()
+  // favorites: Favorite;
 
   @OneToOne(() => User, (user) => user.profile, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
+  @JoinColumn()
   user: User;
 
   // @OneToMany(() => Avatar, (avatar) => avatar.user, {

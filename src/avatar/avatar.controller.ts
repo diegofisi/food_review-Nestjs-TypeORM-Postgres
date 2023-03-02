@@ -59,15 +59,15 @@ export class AvatarController {
   //   return this.avatarService.findAll(paginationDto, user);
   // }
 
-  @Patch(':id')
-  @Auth()
-  update(@Param('id', ParseUUIDPipe) idAvatar, @GetUser() user: User) {
-    return this.avatarService.update(idAvatar, user);
-  }
+  // @Patch(':id')
+  // @Auth()
+  // update(@Param('id', ParseUUIDPipe) idAvatar, @GetUser() user: User) {
+  //   return this.avatarService.update(idAvatar, user);
+  // }
 
-  @Delete(':id')
-  @Auth()
-  remove(@Param('id', ParseUUIDPipe) idAvatar, @GetUser() user: User) {
-    return this.avatarService.remove(idAvatar, user);
-  }
+  // @Delete(':id')
+  // @Auth()
+  // remove(@Param('id', ParseUUIDPipe) idAvatar, @GetUser() user: User) {
+  //   return this.avatarService.remove(idAvatar, user);
+  // }
 }

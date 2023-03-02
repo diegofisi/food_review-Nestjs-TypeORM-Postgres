@@ -14,7 +14,7 @@ import { CreateUserDto, DeleteUserDto, LoginUserDto } from './users/dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { ConfigService } from '@nestjs/config';
 import { Profile } from 'src/profile/entities/profile.entity';
-import { CreateAvatarDto } from '../avatar/dto/create-avatar.dto';
+import { UpdateUserDto } from './users/dto/update-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -55,9 +55,11 @@ export class AuthService {
       throw new UnauthorizedException('Credentials are not valid (email)');
     if (!bcrypt.compareSync(password, user.password))
       throw new UnauthorizedException('Credentials are not valid (password)');
-    //if (user.avatar) delete user.avatar.image;
+    const profileId = user.profile.id;
+    delete user.profile;
     return {
       ...user,
+      profileId,
       token: this.getJwtToken({ id: user.id }),
     };
   }
@@ -103,6 +105,25 @@ export class AuthService {
       ...user,
       token: this.getJwtToken({ id: user.id }),
     };
+  }
+
+  async updateUser(updateUserDto: UpdateUserDto, user: User) {
+    try {
+      const { password, nickname, ...userData } = updateUserDto;
+      const userToUpdate = await this.userRepository.findOne({
+        where: { id: user.id },
+        relations: ['profile'],
+      });
+      const profile = userToUpdate.profile;
+      profile.nickname = nickname;
+      userToUpdate.name = userData.name;
+      userToUpdate.lastname = userData.lastname;
+      userToUpdate.email = userData.email;
+      userToUpdate.password = bcrypt.hashSync(password, 10);
+      return await this.userRepository.save(userToUpdate);
+    } catch (error) {
+      this.handleDBErrors(error);
+    }
   }
 
   private getJwtToken(payload: JwtPayload) {

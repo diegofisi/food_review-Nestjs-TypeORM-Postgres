@@ -15,6 +15,7 @@ import { ValidRoles } from './interfaces/valid-roles';
 import { CreateUserDto } from './users/dto/create-user.dto';
 import { DeleteUserDto } from './users/dto/delete-user.dto';
 import { LoginUserDto } from './users/dto/login-user.dto';
+import { UpdateUserDto } from './users/dto/update-user.dto';
 import { User } from './users/entities/user.entity';
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -57,7 +58,7 @@ export class AuthController {
 
   @Patch()
   @Auth()
-  updateUser(@Body() updateUserDto: CreateUserDto, @GetUser() user: User) {
-    return user;
+  updateUser(@Body() updateUserDto: UpdateUserDto, @GetUser() user: User) {
+    return this.authService.updateUser(updateUserDto, user);
   }
 }

@@ -118,8 +118,13 @@ export class ReviewService {
     return review;
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} post`;
+  async findOne(id: string) {
+    try {
+      const review = await this.reviewRepository.findOneBy({ id });
+      return review;
+    } catch (error) {
+      throw new BadRequestException('Review not found', error);
+    }
   }
 
   update(id: number, updateReviewDto: UpdateReviewDto) {
