@@ -17,8 +17,9 @@ import { ConfigService } from '@nestjs/config';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { FileValidatorsPipe } from 'src/common/pipes/parseFile.pipe';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
-import { Auth } from 'src/auth/decorators';
+import { Auth, GetUser } from 'src/auth/decorators';
 import { CustomImagesInterceptor } from 'src/common/interceptors/images.interceptor';
+import { User } from 'src/auth/users/entities/user.entity';
 
 @Controller('reviews')
 export class ReviewController {
@@ -46,25 +47,33 @@ export class ReviewController {
     @UploadedFiles(FileValidatorsPipe)
     files: Express.Multer.File[],
     @Body() createReviewDto: CreateReviewDto,
+    @GetUser() user: User,
   ) {
-    return await this.reviewService.create2(files, createReviewDto);
+    return await this.reviewService.create2(files, createReviewDto, user);
   }
 
   @Post('upload')
   @Auth()
-  async create(@Body() createReviewDto: CreateReviewDto) {
-    return await this.reviewService.create(createReviewDto);
+  async create(
+    @Body() createReviewDto: CreateReviewDto,
+    @GetUser() user: User,
+  ) {
+    return await this.reviewService.create(createReviewDto, user);
   }
 
   @Patch(':id')
   @Auth()
-  update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
-    return this.reviewService.update(+id, updateReviewDto);
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateReviewDto: UpdateReviewDto,
+    @GetUser() user: User,
+  ) {
+    return this.reviewService.update(id, updateReviewDto, user);
   }
 
   @Delete(':id')
   @Auth()
-  remove(@Param('id') id: string) {
-    return this.reviewService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.reviewService.remove(id);
   }
 }

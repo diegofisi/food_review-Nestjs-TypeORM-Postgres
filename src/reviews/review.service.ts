@@ -16,6 +16,7 @@ import { Review } from './entities/review.entity';
 import { ReviewImage } from 'src/images/entities/image.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { User } from 'src/auth/users/entities/user.entity';
 
 @Injectable()
 export class ReviewService {
@@ -30,11 +31,12 @@ export class ReviewService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async create(createReviewDto: CreateReviewDto) {
+  async create(createReviewDto: CreateReviewDto, user: User) {
     try {
       const { images, ...productDetails } = createReviewDto;
       const review = this.reviewRepository.create({
         ...productDetails,
+        user: user,
         images: images.map((image) =>
           this.reviewImageRepository.create({
             image: image.image,
@@ -52,6 +54,7 @@ export class ReviewService {
   async create2(
     files: Express.Multer.File[],
     createReviewDto: CreateReviewDto,
+    user: User,
   ) {
     const images: ReviewImage[] = [];
     const { images: imagesDto, ...productDetails } = createReviewDto;
@@ -76,6 +79,7 @@ export class ReviewService {
 
     const review = this.reviewRepository.create({
       ...productDetails,
+      user: user,
       images: images.map((image) =>
         this.reviewImageRepository.create({
           image: image.image,
@@ -111,28 +115,37 @@ export class ReviewService {
     const review = await this.reviewRepository.find({
       take: limit,
       skip: offset,
-      // relations: {
-      //   images: true,
-      // },
+      relations: ['images', 'user'],
     });
     return review;
   }
 
   async findOne(id: string) {
     try {
-      const review = await this.reviewRepository.findOneBy({ id });
-      return review;
+      const review = await this.reviewRepository.findOne({
+        where: { id },
+        relations: ['images', 'user', 'opinions'],
+      });
+      const profile = review.user.profile;
+      delete review.user;
+      return { ...review, profile };
     } catch (error) {
-      throw new BadRequestException('Review not found', error);
+      throw new BadRequestException('Review not found ', error);
     }
   }
 
-  update(id: number, updateReviewDto: UpdateReviewDto) {
+  update(id: string, updateReviewDto: UpdateReviewDto, user: User) {
     return `This action updates a #${id} post`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async remove(id: string) {
+    try {
+      const review = await this.reviewRepository.findOneBy({ id });
+      await this.reviewRepository.delete({ id });
+      return review;
+    } catch (error) {
+      throw new BadRequestException(`Review with ${id} don't found`);
+    }
   }
 
   private handleDBExceptions(error: any) {

@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { User } from 'src/auth/users/entities/user.entity';
 import { ReviewImage } from 'src/images/entities/image.entity';
 import { Opinion } from 'src/opinions/entities/opinion.entity';
