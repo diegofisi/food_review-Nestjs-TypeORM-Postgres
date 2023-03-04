@@ -31,12 +31,13 @@ export class ReviewService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async create(createReviewDto: CreateReviewDto, user: User) {
+  async create2(createReviewDto: CreateReviewDto, user: User) {
     try {
       const { images, ...productDetails } = createReviewDto;
       const review = this.reviewRepository.create({
         ...productDetails,
-        user: user,
+        profile: user.profile,
+        createdBy: user.profile.id,
         images: images.map((image) =>
           this.reviewImageRepository.create({
             image: image.image,
@@ -44,14 +45,14 @@ export class ReviewService {
           }),
         ),
       });
-      await this.reviewRepository.save(review);
-      return review;
+      const post = await this.reviewRepository.save(review);
+      return { ...post };
     } catch (error) {
       this.handleDBExceptions(error);
     }
   }
 
-  async create2(
+  async create(
     files: Express.Multer.File[],
     createReviewDto: CreateReviewDto,
     user: User,
@@ -79,7 +80,8 @@ export class ReviewService {
 
     const review = this.reviewRepository.create({
       ...productDetails,
-      user: user,
+      profile: user.profile,
+      createdBy: user.profile.id,
       images: images.map((image) =>
         this.reviewImageRepository.create({
           image: image.image,
@@ -87,25 +89,9 @@ export class ReviewService {
         }),
       ),
     });
-    await this.reviewRepository.save(review);
-    return review;
+    const post = await this.reviewRepository.save(review);
+    return { ...post };
   }
-  // async create(createPostDto: CreatePostDto) {
-  //   const { images, ...productDetails } = createPostDto;
-  //   const idImages = images.map(async (image) => {
-  //     const id = await this.postImageRepository.findOneBy({ id: image });
-  //     if (!id) {
-  //       throw new BadRequestException('Image not found');
-  //     }
-  //     return id;
-  //   });
-  //   const post = this.postsRepository.create({
-  //     ...productDetails,
-  //     images: await Promise.all(idImages),
-  //   });
-  //   const poster = await this.postsRepository.save(post);
-  //   return poster;
-  // }
 
   async findAll(paginationDto: PaginationDto) {
     const {
@@ -126,16 +112,114 @@ export class ReviewService {
         where: { id },
         relations: ['images', 'user', 'opinions'],
       });
-      const profile = review.user.profile;
-      delete review.user;
-      return { ...review, profile };
+      return { ...review };
     } catch (error) {
       throw new BadRequestException('Review not found ', error);
     }
   }
 
-  update(id: string, updateReviewDto: UpdateReviewDto, user: User) {
-    return `This action updates a #${id} post`;
+  async update2(id: string, updateReviewDto: UpdateReviewDto, user: User) {
+    const { images, ...toUpdate } = updateReviewDto;
+
+    const review = await this.reviewRepository.preload({ id, ...toUpdate });
+
+    if (!review) {
+      throw new BadRequestException(`Review with ${id} don't found`);
+    }
+
+    if (review.createdBy !== user.profile.id) {
+      throw new BadRequestException(
+        `You don't have permission to update this review`,
+      );
+    }
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      if (images) {
+        await queryRunner.manager.delete(ReviewImage, { review: review.id });
+        review.images = images.map((image) =>
+          this.reviewImageRepository.create({
+            image: image.image,
+            filename: image.filename,
+          }),
+        );
+        review.updatedAt = new Date();
+        await queryRunner.manager.save(review);
+        await queryRunner.commitTransaction();
+        await queryRunner.release();
+        return review;
+      }
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
+      return this.handleDBExceptions(error);
+    }
+  }
+
+  async update(
+    id: string,
+    files: Express.Multer.File[],
+    updateReviewDto: UpdateReviewDto,
+    user: User,
+  ) {
+    const images: ReviewImage[] = [];
+    const { images: imagesDto, ...toUpdate } = updateReviewDto;
+
+    const review = await this.reviewRepository.preload({ id, ...toUpdate });
+
+    if (!review) {
+      throw new BadRequestException(`Review with ${id} don't found`);
+    }
+
+    if (review.createdBy !== user.profile.id) {
+      throw new BadRequestException(
+        `You don't have permission to update this review`,
+      );
+    }
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      if (images || files) {
+        await queryRunner.manager.delete(ReviewImage, { review: review.id });
+        if (imagesDto) {
+          imagesDto.map((image) => {
+            const reviewImage = new ReviewImage();
+            reviewImage.image = image.image;
+            reviewImage.filename = image.filename;
+            images.push(reviewImage);
+          });
+        }
+        files.map((file) => {
+          const image = new ReviewImage();
+          const bitmap = fs.readFileSync(file.path);
+          const base64 = Buffer.from(bitmap).toString('base64');
+          image.image = base64;
+          image.filename = file.filename;
+          images.push(image);
+        });
+
+        review.images = images.map((image) =>
+          this.reviewImageRepository.create({
+            image: image.image,
+            filename: image.filename,
+          }),
+        );
+        review.updatedAt = new Date();
+        await queryRunner.manager.save(review);
+        await queryRunner.commitTransaction();
+        await queryRunner.release();
+        return review;
+      }
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
+      return this.handleDBExceptions(error);
+    }
   }
 
   async remove(id: string) {

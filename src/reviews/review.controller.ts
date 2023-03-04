@@ -43,32 +43,46 @@ export class ReviewController {
   @Post()
   @Auth()
   @CustomImagesInterceptor('files')
-  async uploadImage(
+  async create(
     @UploadedFiles(FileValidatorsPipe)
     files: Express.Multer.File[],
     @Body() createReviewDto: CreateReviewDto,
     @GetUser() user: User,
   ) {
-    return await this.reviewService.create2(files, createReviewDto, user);
+    return await this.reviewService.create(files, createReviewDto, user);
   }
 
+  //alternative way to upload images
   @Post('upload')
   @Auth()
-  async create(
+  async create2(
     @Body() createReviewDto: CreateReviewDto,
     @GetUser() user: User,
   ) {
-    return await this.reviewService.create(createReviewDto, user);
+    return await this.reviewService.create2(createReviewDto, user);
   }
 
   @Patch(':id')
   @Auth()
+  @CustomImagesInterceptor('files')
   update(
+    @UploadedFiles(FileValidatorsPipe)
+    files: Express.Multer.File[],
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateReviewDto: UpdateReviewDto,
     @GetUser() user: User,
   ) {
-    return this.reviewService.update(id, updateReviewDto, user);
+    return this.reviewService.update(id, files, updateReviewDto, user);
+  }
+
+  @Patch('upload/:id')
+  @Auth()
+  update2(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateReviewDto: UpdateReviewDto,
+    @GetUser() user: User,
+  ) {
+    return this.reviewService.update2(id, updateReviewDto, user);
   }
 
   @Delete(':id')

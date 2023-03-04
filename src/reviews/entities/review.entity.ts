@@ -2,6 +2,7 @@ import { Transform } from 'class-transformer';
 import { User } from 'src/auth/users/entities/user.entity';
 import { ReviewImage } from 'src/images/entities/image.entity';
 import { Opinion } from 'src/opinions/entities/opinion.entity';
+import { Profile } from 'src/profile/entities/profile.entity';
 import {
   Column,
   Entity,
@@ -43,12 +44,29 @@ export class Review {
   })
   url?: string;
 
-  @ManyToOne(() => User, (user) => user.reviews, {
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
+
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  updatedAt: Date;
+
+  @Column({
+    type: 'uuid',
+  })
+  createdBy: string;
+
+  @ManyToOne(() => Profile, (profile) => profile.reviews, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
   @JoinColumn()
-  user: User;
+  profile: Profile;
 
   @ManyToMany(() => Favorite, (favorite) => favorite.reviews, {
     nullable: true,

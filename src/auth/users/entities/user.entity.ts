@@ -57,11 +57,6 @@ export class User {
   @JoinColumn()
   favorites: Favorite;
 
-  @OneToMany(() => Review, (review) => review.user, {
-    cascade: true,
-  })
-  reviews: Review[];
-
   @Column({
     type: 'text',
     array: true,
