@@ -9,7 +9,6 @@ import { ConfigModule } from '@nestjs/config';
 
 import { AuthModule } from './auth/auth.module';
 import { AvatarModule } from './avatar/avatar.module';
-import { FavoritesModule } from './favorites/favorites.module';
 import { ImagesModule } from './images/images.module';
 import { OpinionModule } from './opinions/opinions.module';
 import { ProfileModule } from './profile/profile.module';
@@ -35,7 +34,6 @@ import { BodySizeMiddleware } from './common/middlewares/BodySize.middleware';
     ImagesModule,
     CommonModule,
     OpinionModule,
-    FavoritesModule,
     ProfileModule,
     AvatarModule,
   ],

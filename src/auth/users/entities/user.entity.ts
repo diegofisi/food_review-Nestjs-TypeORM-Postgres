@@ -1,7 +1,5 @@
-import { Favorite } from 'src/favorites/entities/favorite.entity';
-import { JoinColumn, OneToOne, OneToMany } from 'typeorm';
+import { OneToOne } from 'typeorm';
 import { Profile } from '../../../profile/entities/profile.entity';
-import { Review } from '../../../reviews/entities/review.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -9,7 +7,6 @@ import {
   Entity,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Transform } from 'class-transformer';
 
 @Entity({ name: 'users' })
 export class User {
@@ -49,13 +46,6 @@ export class User {
     default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;
-
-  @OneToOne(() => Favorite, (favorite) => favorite.user, {
-    cascade: true,
-    eager: true,
-  })
-  @JoinColumn()
-  favorites: Favorite;
 
   @Column({
     type: 'text',

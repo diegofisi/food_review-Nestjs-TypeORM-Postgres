@@ -1,5 +1,3 @@
-import { Transform } from 'class-transformer';
-import { User } from 'src/auth/users/entities/user.entity';
 import { Profile } from '../../profile/entities/profile.entity';
 import {
   Column,
@@ -26,13 +24,4 @@ export class Avatar {
   })
   @JoinColumn()
   profile: Profile;
-
-  // @Transform(({ value }) => {
-  //   return value.id;
-  // })
-  // @ManyToOne(() => User, (user) => user.avatars, {
-  //   onDelete: 'CASCADE',
-  //   onUpdate: 'CASCADE',
-  // })
-  // user: User;
 }

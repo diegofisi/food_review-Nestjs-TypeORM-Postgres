@@ -28,13 +28,6 @@ export class Profile {
   })
   avatar: Avatar;
 
-  // @OneToOne(() => Favorite, (favorite) => favorite.user, {
-  //   cascade: true,
-  //   eager: true,
-  // })
-  // @JoinColumn()
-  // favorites: Favorite;
-
   @OneToMany(() => Review, (review) => review.profile, {
     cascade: true,
   })
@@ -46,10 +39,4 @@ export class Profile {
   })
   @JoinColumn()
   user: User;
-
-  // @OneToMany(() => Avatar, (avatar) => avatar.user, {
-  //   cascade: true,
-  //   eager: true,
-  // })
-  // avatars: Avatar[];
 }

@@ -1,18 +1,7 @@
-import {
-  IsDecimal,
-  IsInt,
-  IsNumber,
-  IsNumberString,
-  IsOptional,
-  IsString,
-  Max,
-  Min,
-  MinLength,
-} from 'class-validator';
+import { IsOptional, IsString, Max, Min, MinLength } from 'class-validator';
 import { Type } from 'class-transformer';
 import { IsArray, IsUrl, ValidateNested } from 'class-validator';
 import { CreateImageDto } from 'src/images/dto/create-image.dto';
-import { Transform } from 'class-transformer/types/decorators';
 
 export class CreateReviewDto {
   @IsString()

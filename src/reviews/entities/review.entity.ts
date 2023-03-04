@@ -1,5 +1,3 @@
-import { Transform } from 'class-transformer';
-import { User } from 'src/auth/users/entities/user.entity';
 import { ReviewImage } from 'src/images/entities/image.entity';
 import { Opinion } from 'src/opinions/entities/opinion.entity';
 import { Profile } from 'src/profile/entities/profile.entity';
@@ -7,12 +5,10 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Favorite } from '../../favorites/entities/favorite.entity';
 
 @Entity({ name: 'reviews' })
 export class Review {
@@ -67,11 +63,6 @@ export class Review {
   })
   @JoinColumn()
   profile: Profile;
-
-  @ManyToMany(() => Favorite, (favorite) => favorite.reviews, {
-    nullable: true,
-  })
-  favorites: Favorite[];
 
   @OneToMany(() => ReviewImage, (postImage) => postImage.review, {
     cascade: true,

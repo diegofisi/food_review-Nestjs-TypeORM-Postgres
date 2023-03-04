@@ -10,19 +10,16 @@ import {
 import { OpinionService } from './opinions.service';
 import { CreateOpinionDto } from './dto/create-opinion.dto';
 import { UpdateOpinionDto } from './dto/update-opinion.dto';
+import { Auth, GetUser } from 'src/auth/decorators';
 
-@Controller('opinions')
+@Controller(':id/opinions')
 export class OpinionController {
   constructor(private readonly opinionService: OpinionService) {}
 
-  @Post()
-  create(@Body() createOpinionDto: CreateOpinionDto) {
+  @Post(':id')
+  @Auth()
+  create(@Body() createOpinionDto: CreateOpinionDto, @GetUser() user) {
     return this.opinionService.create(createOpinionDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.opinionService.findAll();
   }
 
   @Get(':id')

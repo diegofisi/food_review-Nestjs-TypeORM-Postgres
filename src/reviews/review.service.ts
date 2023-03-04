@@ -7,14 +7,11 @@ import {
 import * as fs from 'fs';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Favorite } from 'src/favorites/entities/favorite.entity';
-import { ImagesService } from 'src/images/images.service';
 import { DataSource, Repository } from 'typeorm';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { Review } from './entities/review.entity';
 import { ReviewImage } from 'src/images/entities/image.entity';
-import { v4 as uuidv4 } from 'uuid';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { User } from 'src/auth/users/entities/user.entity';
 

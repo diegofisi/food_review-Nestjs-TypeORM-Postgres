@@ -13,6 +13,23 @@ export class Opinion {
   })
   opinion: string;
 
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
+
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  updatedAt: Date;
+
+  @Column({
+    type: 'uuid',
+  })
+  createdBy: string;
+
   @ManyToOne(() => Review, (review) => review.opinions, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',

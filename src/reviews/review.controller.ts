@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { UpdateReviewDto } from './dto/update-review.dto';
-import { ImagesService } from 'src/images/images.service';
 import { ConfigService } from '@nestjs/config';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { FileValidatorsPipe } from 'src/common/pipes/parseFile.pipe';
@@ -62,6 +61,8 @@ export class ReviewController {
     return await this.reviewService.create2(createReviewDto, user);
   }
 
+  //this is the way to update images it's more simple than the patch 'upload' way
+  //you can upload a file with form data and update the review
   @Patch(':id')
   @Auth()
   @CustomImagesInterceptor('files')
