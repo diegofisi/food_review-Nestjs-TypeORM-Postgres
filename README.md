@@ -26,6 +26,12 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## Environment
+
+```bash
+rename .env.template to .env
+```
+
 ## Installation
 
 ```bash
