@@ -13,7 +13,6 @@ import { CreateOpinionDto } from './dto/create-opinion.dto';
 import { UpdateOpinionDto } from './dto/update-opinion.dto';
 import { Auth, GetUser } from 'src/auth/decorators';
 import { User } from 'src/auth/users/entities/user.entity';
-import { ValidRoles } from 'src/auth/interfaces/valid-roles';
 
 @Controller('reviews/:reviewId/opinions')
 export class OpinionController {
