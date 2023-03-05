@@ -14,6 +14,7 @@ import { Review } from './entities/review.entity';
 import { ReviewImage } from 'src/images/entities/image.entity';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { User } from 'src/auth/users/entities/user.entity';
+import { Opinion } from 'src/opinions/entities/opinion.entity';
 
 @Injectable()
 export class ReviewService {
@@ -107,9 +108,12 @@ export class ReviewService {
     try {
       const review = await this.reviewRepository.findOne({
         where: { id },
-        relations: ['images', 'opinions'],
+        relations: ['images'],
       });
-      return { ...review };
+      const opinions = await this.dataSource.manager
+        .getTreeRepository(Opinion)
+        .findTrees();
+      return { ...review, opinions };
     } catch (error) {
       throw new BadRequestException('Review not found ', error);
     }

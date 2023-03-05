@@ -5,6 +5,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ValidRoles } from 'src/auth/interfaces/valid-roles';
 import { User } from 'src/auth/users/entities/user.entity';
 import { Review } from 'src/reviews/entities/review.entity';
 import { Repository, DataSource } from 'typeorm';
@@ -71,20 +72,47 @@ export class OpinionService {
     }
   }
 
-  findAll(id: string) {
-    return this.opinionRepository;
+  async findAll() {
+    return await this.dataSource.manager.getTreeRepository(Opinion).findTrees();
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} comment`;
+  async update(id: string, updateOpinionDto: UpdateOpinionDto, user: User) {
+    try {
+      const opinion = await this.opinionRepository.findOneBy({ id });
+      if (!opinion) throw new BadRequestException('Comment not found');
+      if (user.profile.id !== opinion.profileId)
+        throw new BadRequestException('You are not the owner of this comment');
+      if (opinion.isActive === false)
+        throw new BadRequestException('Comment already deleted');
+      opinion.opinion = updateOpinionDto.opinion;
+      opinion.updatedAt = new Date();
+      return await this.opinionRepository.save(opinion);
+    } catch (error) {
+      return this.handleDBExceptions(error);
+    }
   }
 
-  update(id: string, idOpinion: string, updateOpinionDto: UpdateOpinionDto) {
-    return `This action updates a #${id} comment`;
-  }
-
-  remove(id: string, idOpinion: string) {
-    return `This action removes a #${id} comment`;
+  async remove(id: string, user: User) {
+    try {
+      const opinion = await this.opinionRepository.findOneBy({ id });
+      if (!opinion) throw new BadRequestException('Comment not found');
+      if (user.roles.includes(ValidRoles.admin || ValidRoles.superUser)) {
+        opinion.opinion = 'Message was deleted by Admin';
+        opinion.updatedAt = new Date();
+        opinion.isActive = false;
+        return await this.opinionRepository.save(opinion);
+      }
+      if (user.profile.id !== opinion.profileId)
+        throw new BadRequestException('You are not the owner of this comment');
+      if (opinion.isActive === false)
+        throw new BadRequestException('Comment already deleted');
+      opinion.opinion = 'Message was deleted';
+      opinion.updatedAt = new Date();
+      opinion.isActive = false;
+      return await this.opinionRepository.save(opinion);
+    } catch (error) {
+      return this.handleDBExceptions(error);
+    }
   }
 
   private handleDBExceptions(error: any) {

@@ -30,37 +30,23 @@ export class OpinionController {
   }
 
   @Get()
-  findOne(@Param('reviewId', ParseUUIDPipe) id: string) {
-    return this.opinionService.findAll(id);
+  findAll() {
+    return this.opinionService.findAll();
   }
 
   @Patch(':id')
   @Auth()
   update(
-    @Param('reviewId', ParseUUIDPipe) id: string,
-    @Param('id', ParseUUIDPipe) idOpinion: string,
-    @Body() updateOpinionDto: UpdateOpinionDto,
     @GetUser() user: User,
+    @Body() updateOpinionDto: UpdateOpinionDto,
+    @Param('id', ParseUUIDPipe) id: string,
   ) {
-    return this.opinionService.update(id, idOpinion, updateOpinionDto);
+    return this.opinionService.update(id, updateOpinionDto, user);
   }
 
   @Delete(':id')
   @Auth()
-  remove(
-    @Param('reviewId', ParseUUIDPipe) id: string,
-    @Param('id', ParseUUIDPipe) idOpinion: string,
-    @GetUser() user: User,
-  ) {
-    return this.opinionService.remove(id, idOpinion);
-  }
-
-  @Delete(':id/admin')
-  @Auth(ValidRoles.admin, ValidRoles.superUser)
-  removeComentary(
-    @Param('reviewId', ParseUUIDPipe) id: string,
-    @Param('id', ParseUUIDPipe) idOpinion: string,
-  ) {
-    return this.opinionService.remove(id, idOpinion);
+  remove(@Param('id', ParseUUIDPipe) id: string, @GetUser() user: User) {
+    return this.opinionService.remove(id, user);
   }
 }

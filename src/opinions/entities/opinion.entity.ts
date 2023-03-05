@@ -46,6 +46,12 @@ export class Opinion {
   })
   profileId: string;
 
+  @Column({
+    type: 'bool',
+    default: true,
+  })
+  isActive: boolean;
+
   @TreeChildren()
   children: Opinion[];
 

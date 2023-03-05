@@ -72,7 +72,6 @@ export class Review {
 
   @OneToMany(() => Opinion, (opinion) => opinion.review, {
     cascade: true,
-    eager: true,
     nullable: true,
   })
   opinions: Opinion[];
