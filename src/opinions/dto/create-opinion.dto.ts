@@ -1,8 +1,8 @@
-import { IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsOptional, IsString, IsUUID, MinLength } from 'class-validator';
 
 export class CreateOpinionDto {
   @IsString()
-  @IsOptional()
+  @MinLength(1)
   opinion: string;
 
   @IsUUID()

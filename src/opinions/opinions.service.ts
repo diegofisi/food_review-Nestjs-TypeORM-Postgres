@@ -36,7 +36,6 @@ export class OpinionService {
       const { commentId } = createOpinionDto;
 
       if (commentId) {
-        console.log(commentId);
         const parentOpinion = await this.opinionRepository.findOneBy({
           id: commentId,
         });
@@ -59,7 +58,10 @@ export class OpinionService {
         profileId: user.profile.id,
       });
       await queryRunner.manager.save<Opinion>(opinion);
-      const review = await this.reviewRepository.findOneBy({ id: reviewId });
+      const review = await this.reviewRepository.findOne({
+        where: { id: reviewId },
+        relations: ['opinions'],
+      });
       review.opinions.push(opinion);
       await queryRunner.manager.save<Review>(review);
       await queryRunner.commitTransaction();
