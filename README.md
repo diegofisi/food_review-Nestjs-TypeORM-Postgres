@@ -32,6 +32,14 @@
 rename .env.template to .env
 ```
 
+## Docker
+
+```bash
+in docker compose put the next code:
+docker compose up
+```
+
+
 ## Installation
 
 ```bash
