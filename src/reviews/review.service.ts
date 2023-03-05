@@ -98,7 +98,7 @@ export class ReviewService {
     const review = await this.reviewRepository.find({
       take: limit,
       skip: offset,
-      relations: ['images', 'user'],
+      relations: ['images'],
     });
     return review;
   }
@@ -107,7 +107,7 @@ export class ReviewService {
     try {
       const review = await this.reviewRepository.findOne({
         where: { id },
-        relations: ['images', 'user', 'opinions'],
+        relations: ['images', 'opinions'],
       });
       return { ...review };
     } catch (error) {

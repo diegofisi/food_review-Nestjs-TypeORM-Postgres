@@ -1,7 +1,18 @@
+import { Transform } from 'class-transformer';
+import { Profile } from 'src/profile/entities/profile.entity';
 import { Review } from 'src/reviews/entities/review.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Tree,
+  TreeChildren,
+  TreeParent,
+} from 'typeorm';
 
 @Entity({ name: 'opinions' })
+@Tree('materialized-path')
 export class Opinion {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -26,9 +37,20 @@ export class Opinion {
   updatedAt: Date;
 
   @Column({
-    type: 'uuid',
+    type: 'text',
   })
   createdBy: string;
+
+  @Column({
+    type: 'text',
+  })
+  profileId: string;
+
+  @TreeChildren()
+  children: Opinion[];
+
+  @TreeParent()
+  parent: Opinion;
 
   @ManyToOne(() => Review, (review) => review.opinions, {
     onDelete: 'CASCADE',

@@ -8,14 +8,14 @@ import { ConfigModule } from '@nestjs/config';
 import { ReviewImage } from 'src/images/entities/image.entity';
 import { Review } from './entities/review.entity';
 import { CommonModule } from '../common/common.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   controllers: [ReviewController],
   providers: [ReviewService],
   imports: [
-    TypeOrmModule.forFeature([ReviewImage, Review]),
+    TypeOrmModule.forFeature([ReviewImage, Review, ReviewImage]),
     AuthModule,
-    ImagesModule,
     ConfigModule,
     CommonModule,
   ],
