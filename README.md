@@ -35,8 +35,9 @@ rename .env.template to .env
 ## Docker
 
 ```bash
-in docker compose put the next code:
-docker compose up
+-open docker desktop
+-open project terminal and put the next code
+docker compose up -d
 ```
 
 
