@@ -38,6 +38,21 @@ rename .env.template to .env
 -open docker desktop
 -open project terminal and put the next code
 docker compose up -d
+-if you want see the database in the browser just go to http://localhost:8080/browser/
+-for login you just need PGADMIN_DEFAULT_PASSWORD and PGADMIN_DEFAULT_EMAIL for connection you need:
+
+host: DB_NAME (is the name of the container of the postgres image) in this case not is localhost
+maintenance database: postgres
+port: in this case is image default port "5432"
+username: in this case is "postgres"
+password: in this case is "your-db-password"
+
+example:
+host: your-db-name
+port: 5432
+maintenance database: postgres
+username: postgres
+password: your-db-password
 ```
 
 
