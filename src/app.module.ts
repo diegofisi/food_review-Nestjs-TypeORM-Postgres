@@ -14,7 +14,7 @@ import { OpinionModule } from './opinions/opinions.module';
 import { ProfileModule } from './profile/profile.module';
 import { ReviewModule } from './reviews/review.module';
 import { CommonModule } from './common/common.module';
-import { BodySizeMiddleware } from './common/middlewares/BodySize.middleware';
+import { BodySizeMiddleware } from './common/middlewares/bodySize.middleware';
 
 @Module({
   imports: [
